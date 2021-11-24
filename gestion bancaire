@@ -1,0 +1,305 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include<string.h>
+//**STRUCTURE D'UN COMPTE BANCAIRE
+typedef struct
+{
+    char nom[20],prenom[20],cin[10];
+    float montant;
+} compte;
+// Declaration globale de tableau de structures de compte bancaire
+compte* c;
+// initialer la taille de compte par 0 apres incrementer
+int taille_compte=0;
+
+//**FONCTION POUR L'EXISTENCE DE LA CIN
+int recherche_par_cin(char* cin)
+{
+    int i;
+    for(i=0; i<taille_compte; i++)
+    {
+        if(strcmp(c[i].cin,cin)==0)
+            return 1;
+    }
+    return 0;
+}
+//**FONCTION POUR AJOUTER UN OU PLUSIEUR COMPTES BANCAIRES
+void introduire_comptes_bancaires(int nbc)
+{
+	int i,cpt=0;
+	char cin[10];
+	printf("  \nVeuillez saisir le CIN: ");
+	scanf("%s",cin);
+	for(i=taille_compte;i<taille_compte+nbc;i++)
+	{
+		c=realloc(c,(taille_compte+nbc)*sizeof(compte));
+		if(!recherche_par_cin(cin))
+		{
+			strcpy(c[i].cin,cin);
+			printf("  \nVeuillez saisir le Nom: ");
+			scanf("%s",c[i].nom);
+			printf("  \nVeuillez saisir le Prenom: ");
+			scanf("%s",c[i].prenom);
+			printf("  \nVeuillez saisir le Montant: ");
+			scanf("%f",&c[i].montant);
+			cpt++;
+			system("cls");
+		}
+		else
+		printf("\nce compte deja existe\n");
+		
+	}taille_compte+=cpt;
+}
+//**FONCTION POUR RETRAIT D'APRES LE COMPTE BANCAIRE
+void retrait(float* mont1,char cin[])
+{
+    int i;
+    if(c==NULL)
+      printf("aucun compte\n");
+      if(recherche_par_cin(cin))
+      {
+      	for(i=0;i<taille_compte;i++)
+		    {
+		        if(*mont1>c[i].montant)
+		            printf("ce montant n'est pas disponible dans ce compte\n");
+		        else
+		          {
+		        	c[i].montant=c[i].montant-*mont1;
+		        	printf("votre nouveau montant est: %.3f\n",c[i].montant);
+				  }
+			}
+	  }
+}
+
+//**FONCTION POUR LE DEPOT D'APRES LE COMPTE BANCAIRE
+void depot( float* mont2,char cin[])
+{
+    if(c==NULL)
+      printf("aucun compte\n");
+    int i;
+    if(recherche_par_cin(cin))
+    {
+		for(i=0;i<taille_compte;i++)
+		    {
+		        c[i].montant=c[i].montant+*mont2;
+		        printf("votre nouveau montant est: %.3f\n",c[i].montant);
+		    }
+	}
+	else
+	  printf("ce compte n'existe pas");
+}
+//**FONCTION POUR TRIER TOUT LES COMPTE PAR ORDRE CROISSANTE
+void trier_ascendant()
+{
+	compte c1;
+    int i,j;
+    if(c==NULL)
+      printf("aucun compte\n");
+      char tmp1[10],tmp2[10],tmp3[10];
+      float tmp4;
+    for(i=0; i<taille_compte; i++)
+    {
+        for(j=i+1;j<taille_compte;j++)
+        {
+        	if(c[i].montant>c[j].montant)
+	        {
+	        	c1=c[i];
+	        	c[i]=c[j];
+	        	c[j]=c1;
+	        }
+		}
+    }
+}
+//**FONCTION POUR AFFICHER TOUT LES COMPTES BANCAIRE PAR ORDRE CROISSANTE
+void affich_ascendant()
+{
+    int i;
+    if(c==NULL)
+      printf("aucun compte\n");
+    for(i=0; i<taille_compte; i++)
+    {
+        printf("- Compte %d\n",i+1);
+        printf("   - Nom: %s\n   - Prenom: %s\n   - Cin: %s\n   - Montant: %.3f\t",c[i].nom,c[i].prenom,c[i].cin,c[i].montant);
+    }
+}
+//**FONCTION POUR TRIER TOUT LES COMPTE PAR ORDRE DECROISSANTE
+void trier_descendant()
+{
+	compte c1;
+    int i,j;
+    if(c==NULL)
+      printf("aucun compte\n");
+      char tmp1[10],tmp2[10],tmp3[10];
+      float tmp4;
+    for(i=0; i<taille_compte; i++)
+    {
+        for(j=i+1;j<taille_compte;j++)
+        {
+        	if(c[i].montant<c[j].montant)
+	        {
+	        	c1=c[i];
+	        	c[i]=c[j];
+	        	c[j]=c1;
+	        }
+		}
+    }
+}
+//**FONCTION POUR AFFICHER TOUT LES COMPTE PAR ORDRE DECROISSANTE
+void affich_descendant()
+{
+    int i;
+    if(c==NULL)
+      printf("aucun compte\n");
+    for(i=0; i<taille_compte; i++)
+    {
+        printf("- Compte %d\n",i+1);
+        printf("  - Nom: %s\n   - Prenom: %s\n   - Cin: %s\n   - Montant: %.3f\t",c[i].nom,c[i].prenom,c[i].cin,c[i].montant);
+    }
+}
+
+//**FONCTION POUR A LES TOIS SUP MONTANT COMPTES
+void fedilisation()
+{
+	int i;
+	trier_descendant();
+	for(i=0;i<3;i++)
+	{
+		c[i].montant+=(1.3/100)*c[i].montant;
+	}
+}
+
+
+
+
+
+int main()
+{
+	int choix1,choix2,choix3,code,nbc;
+	char cin1[10],cin2[10],cin3[10];
+	c=malloc(sizeof(compte));
+	float mont1,mont2;
+	do
+	{
+		do
+	    {
+	        printf("\n**********MENU********\n\n");
+	        printf("  1 - Introduire une seule compte bancaire\n");
+	        printf("  2 - Introduire plusieurs comptes bancaires\n");
+	        printf("  3 - Operations\n");
+	        printf("  4 - Affichage\n");
+	        printf("  5 - Fidelisation\n");
+	        printf("  6 - Quitter application\n\n");
+	        printf("Veuillez saisir votre choix: ");
+	        scanf("%d",&choix1);
+	    } while(choix1<1 || choix1>6);
+	    system("cls");
+	    switch(choix1)
+	    {
+	    	case 1:
+	    		while(code!=1234)
+		        {
+		            printf("\nVeuillez saisir le mot de passe: ");
+		            scanf("%d",&code);
+		        }
+		        system("cls");
+		        introduire_comptes_bancaires(1);
+	        break;
+	        case 2:
+	        	while(code!=1234)
+		        {
+		            printf("\nVeuillez saisir le mot de passe: ");
+		            scanf("%d",&code);
+		        }
+	        	printf("\nVeuillez saisir le nombre de comptes ajouter: ");
+	        	scanf("%d",&nbc);
+	        	system("cls");
+	        	introduire_comptes_bancaires(nbc);
+	        break;
+			case 3:
+				while(code!=1234)
+		        {
+		            printf("\n\nVeuillez saisir le mot de passe: ");
+		            scanf("%d",&code);
+		        }
+		        system("cls");
+		        do
+		        {
+		            printf("   1 - Retrait\n");
+		            printf("   2 - Depot\n");
+		            printf("\n\nVeuillez saisir votre choix: ");
+		            scanf("%d",&choix2);
+		        } while(choix2<1 || choix2>2);
+		        system("cls");
+		        switch(choix2)
+		        {
+		        case 1:
+
+		            printf("\nVeuillez entrer votre cin: ");
+		            scanf("%s",cin1);
+	                printf("\nVeuillez saisir le montant: ");
+	                scanf("%f",&mont1);
+	                system("cls");
+		            retrait(&mont1, cin1);
+		            break;
+		        case 2:
+
+		            printf("\nVeuillez entrer votre cin: ");
+		            scanf("%s",cin2);
+	                printf("\nVeuillez saisir le montant: ");
+	                scanf("%f",&mont2);
+	                system("cls");
+		            depot( &mont2,cin2);
+		            break;
+		        }
+		        break;
+			   case 4:
+				   	while(code!=1234)
+			        {
+			            printf("\n\nVeuillez saisir le mot de passe: ");
+			            scanf("%d",&code);
+			        }
+			        system("cls");
+			        do
+			        {
+			            printf("\n  1 - Affichage par ordre ascendant\n");
+			            printf("  2 - Affichage par ordre descendant\n");
+			            printf("  3 - Recherche par CIN\n");
+			            printf("\n\nVeuillez tapez votre choix: ");
+			            scanf("%d",&choix3);
+			        } while(choix3<1 || choix3>3);
+			        system("cls");
+			        switch(choix3)
+			        {
+			        case 1:
+			        	trier_ascendant();
+			            affich_ascendant();
+			            break;
+			        case 2:
+			        	trier_descendant();
+			            affich_descendant();
+			            break;
+			        case 3:
+
+			            printf("\n\nVeuillez entrer votre cin: ");
+			            scanf("%s",cin3);
+			            system("cls");
+			            if(recherche_par_cin(cin3))
+                            printf("\nCe CIN est existe\n");
+                        else
+                            printf("\nCe CIN n'est pas existe\n");
+			            break;
+			        }
+	        break;
+			case 5:
+					while(code!=1234)
+			        {
+			            printf("\n\nVeuillez saisir le mot de passe: ");
+			            scanf("%d",&code);
+			        }
+			        system("cls");
+			      fedilisation();
+            break;
+		}
+	}while(choix1!=6);
+	free(c);
+}
